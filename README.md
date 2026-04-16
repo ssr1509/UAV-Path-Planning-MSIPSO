@@ -2,8 +2,6 @@
 
 Course project for DA243 (Introduction to Optimization): Autonomous 3D UAV path planning in dense urban environments using a Multistrategy Improved Particle Swarm Optimization (MSIPSO) algorithm. Features B-spline trajectory smoothing and interactive 3D Plotly visualizations.
 
-![MSIPSO 3D Path]
-
 ## System Architecture & Mathematical Highlights
 
 ### 1. Trajectory Parameterization (Dimensionality Reduction)
