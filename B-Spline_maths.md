@@ -18,7 +18,9 @@ Because the start ($\mathbf{S}$) and target ($\mathbf{T}$) nodes are physically 
 Therefore, **a single particle in the swarm mathematically encodes exactly one complete 3D flight path.** By grouping the 3D spatial coordinates of the three free control points, we map the infinite-dimensional continuous path planning problem down to a strictly 9-dimensional search space.
 
 The position vector for any particle $i$ in the MSIPSO swarm is strictly defined as:
+
 $$\mathbf{X}_i = [x_1, y_1, z_1, x_2, y_2, z_2, x_3, y_3, z_3]^T \in \mathbb{R}^9$$
+
 *(Where $(x_k, y_k, z_k)$ represents the spatial coordinates of control point $\mathbf{P}_k$).*
 
 ## 2. B-Spline Curve Definition
@@ -37,17 +39,22 @@ The basis functions are determined by a non-decreasing sequence of real numbers 
 For our trajectory, the UAV must strictly begin at $\mathbf{S}$ and end at $\mathbf{T}$. To enforce this boundary condition without adding penalty constraints to the objective function, we use a **Clamped (or Open) Knot Vector**. This mathematical property requires the first $p+1$ knots to be $0$, and the last $p+1$ knots to be $1$.
 
 Given $n=4$ and $p=3$, we require $m+1 = 9$ knots. The uniform clamped knot vector used in this system is:
+
 $$U = \{0, 0, 0, 0, 0.5, 1, 1, 1, 1\}$$
+
 This geometric clamping mathematically guarantees that $\mathbf{C}(0) = \mathbf{S}$ and $\mathbf{C}(1) = \mathbf{T}$.
 
 ### 2.2 The Cox-de Boor Recursion Formula
 The basis functions $N_{i,p}(t)$ are computed using the recursive Cox-de Boor algorithm.
 
 For degree $p = 0$:
-$$N_{i,0}(t) = \begin{cases} 1 & \text{if } u_i \le t < u_{i+1} \\ 0 & \text{otherwise} \end{cases}$$
+
+$$N_{i,0}(t) = \begin{cases} 1 & \text{if } u_i \le t < u_{i+1} \\\\ 0 & \text{otherwise} \end{cases}$$
 
 For degree $p > 0$:
+
 $$N_{i,p}(t) = \frac{t - u_i}{u_{i+p} - u_i} N_{i,p-1}(t) + \frac{u_{i+p+1} - t}{u_{i+p+1} - u_{i+1}} N_{i+1,p-1}(t)$$
+
 *(Note: By mathematical convention, any term evaluating to a zero denominator is defined as zero).*
 
 ## 3. Differential Geometry and UAV Kinematics
@@ -60,12 +67,14 @@ A piecewise linear path ($p=1$) would require infinite instantaneous acceleratio
 The spatial velocity vector $\mathbf{v}(t)$ and acceleration vector $\mathbf{a}(t)$ of the UAV are the first and second parametric derivatives of the B-Spline curve:
 
 $$\mathbf{v}(t) = \mathbf{C}'(t) = \frac{d\mathbf{C}}{dt}$$
+
 $$\mathbf{a}(t) = \mathbf{C}''(t) = \frac{d^2\mathbf{C}}{dt^2}$$
 
 ### 3.2 Arc Length Evaluation ($f_L$)
 The MSIPSO objective function actively minimizes the total flight distance $f_L$. This is calculated mathematically as the line integral of the velocity vector magnitude over the normalized flight time:
 
 $$f_L = \int_{0}^{1} \left\| \mathbf{C}'(t) \right\| dt = \int_{0}^{1} \sqrt{ \left(\frac{dx}{dt}\right)^2 + \left(\frac{dy}{dt}\right)^2 + \left(\frac{dz}{dt}\right)^2 } dt$$
+
 In the code implementation, this integral is approximated via high-resolution discrete summation of chord lengths along the generated spline points to maintain $O(N)$ computational efficiency.
 
 ### 3.3 Turning Angle Constraint ($f_A$)
